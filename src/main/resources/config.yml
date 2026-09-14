@@ -1,0 +1,66 @@
+max-level: 10
+attribute-separator: "&7=======&9&l装备属性&7======="
+attribute-format: "&8[*]&7{attribute}&c{value}"
+
+attack-gem-probability:
+  - max-attack: 15
+    rate: 1.0
+  - max-attack: 20
+    rate: 0.85
+  - max-attack: 30
+    rate: 0.55
+  - max-attack: 40
+    rate: 0.35
+  - max-attack: 50
+    rate: 0.25
+  - default: 0.05
+
+dieying-probability:
+  - max-attribute: 100    # 武器: 攻击力增加; 护甲: 生命力增加
+    rate: 0.5
+  - max-attribute: 120
+    rate: 0.3
+  - max-attribute: 150
+    rate: 0.2
+  - max-attribute: 200
+    rate: 0.1
+  - max-attribute: 300
+    rate: 0.08
+  - default: 0.05
+
+attribute-patterns:
+  attack:
+    regex: "&7攻击力增加&c([+-]?\\d+)"
+    attribute: "攻击力增加"
+  defense:
+    regex: "&7防御力增加&c([+-]?\\d+)"
+    attribute: "防御力增加"
+  health:
+    regex: "&7生命力增加&c([+-]?\\d+)"
+    attribute: "生命力增加"
+  true_damage:
+    regex: "&7真实伤害增加&c([+-]?\\d+)"
+    attribute: "真实伤害增加"
+  crit_rate:
+    regex: "&7暴击率增加&c([+-]?\\d+)"
+    attribute: "暴击率增加"
+  dodge_rate:
+    regex: "&7闪避率增加&c([+-]?\\d+)"
+    attribute: "闪避率增加"
+
+combo-gems:
+  - trigger: "雷击伤害增加"
+    attributes: ["雷击伤害增加", "雷击几率增加"]
+    increments: [1, 10]
+  - trigger: "吸血倍率增加"
+    attributes: ["吸血倍率增加", "吸血几率增加"]
+    increments: [1, 10]
+
+# ========== 属性迁移相关配置 ==========
+# 可叠加的属性列表（属性名需与 attribute-patterns 中的一致）
+stackable-attributes:
+  - "攻击力增加"
+  - "防御力增加"
+  - "生命力增加"
+# 属性行中包含此标记时，也视为可叠加（如 "&7(可叠加)"）
+stackable-lore-marker: "&7(可叠加)"
