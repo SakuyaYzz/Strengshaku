@@ -1,6 +1,9 @@
 # Strengshaku
 
 [中文](#中文) | [English](#english)
+[![Paper](https://img.shields.io/badge/Paper-1.21.4-blue)](https://papermc.io/)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
 
 ---
 
