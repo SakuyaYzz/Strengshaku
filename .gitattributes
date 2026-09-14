@@ -1,17 +1,5 @@
-# 忽略依赖和构建产物
-node_modules/* linguist-vendored=true
-vendor/* linguist-vendored=true
-dist/* linguist-vendored=true
-build/* linguist-vendored=true
+* linguist-detectable=false
 
-# 忽略生成文件
-*.min.js linguist-generated=true
-*.map linguist-generated=true
+*.java linguist-detectable=true
 
-# 忽略文档
-docs/* linguist-documentation=true
-*.md linguist-documentation=true
-
-# 强制某些文件算指定语言
-*.inc linguist-language=PHP
-*.h linguist-language=C++
+*.java linguist-vendored=false linguist-generated=false linguist-documentation=false
