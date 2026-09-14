@@ -127,17 +127,52 @@ stackable-lore-marker: "&7(可叠加)"
 
 ### 构建方法
 
-本项目使用 Maven 构建。确保已安装 JDK 21 和 Maven。
+本项目使用 **Gradle** 构建。确保已安装 JDK 21。
+
+在项目根目录执行：
 
 ```bash
-mvn clean package
+# Linux / macOS
+./gradlew clean build
+
+# Windows
+gradlew.bat clean build
 ```
 
-构建完成后，可在 `target/` 目录找到 `Strengshaku-1.0.jar`。
+构建完成后，可在 `build/libs/` 目录找到 `Strengshaku-1.0.jar`。
 
 **依赖：**
+
 - Paper API 1.21.4
 - Java 21
+
+`build.gradle.kts` 示例（供参考）：
+
+```kotlin
+plugins {
+    java
+}
+
+group = "org.shaku"
+version = "1.0"
+
+repositories {
+    mavenCentral()
+    maven("https://repo.papermc.io/repository/maven-public/")
+}
+
+dependencies {
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+}
+```
 
 ### 注意事项
 
@@ -270,17 +305,52 @@ stackable-lore-marker: "&7(可叠加)"
 
 ### Build
 
-This project uses Maven. Ensure JDK 21 and Maven are installed.
+This project uses **Gradle**. Make sure JDK 21 is installed.
+
+From the project root, run:
 
 ```bash
-mvn clean package
+# Linux / macOS
+./gradlew clean build
+
+# Windows
+gradlew.bat clean build
 ```
 
-After building, the `Strengshaku-1.0.jar` will be in the `target/` directory.
+After building, the `Strengshaku-1.0.jar` will be in the `build/libs/` directory.
 
 **Dependencies:**
+
 - Paper API 1.21.4
 - Java 21
+
+Example `build.gradle.kts`:
+
+```kotlin
+plugins {
+    java
+}
+
+group = "org.shaku"
+version = "1.0"
+
+repositories {
+    mavenCentral()
+    maven("https://repo.papermc.io/repository/maven-public/")
+}
+
+dependencies {
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+}
+```
 
 ### Notes
 
