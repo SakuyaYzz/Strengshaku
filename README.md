@@ -4,7 +4,6 @@
 [![Paper](https://img.shields.io/badge/Paper-1.21.4-blue)](https://papermc.io/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-
 ---
 
 ## 中文
@@ -113,3 +112,180 @@ stackable-attributes:
 
 # 可叠加 Lore 标记
 stackable-lore-marker: "&7(可叠加)"
+```
+
+### 安装与使用
+
+1. 将 `Strengshaku.jar` 放入服务器 `plugins` 文件夹。
+2. 启动或重启服务器，插件会自动生成 `config.yml`。
+3. 根据需求修改 `config.yml`，然后重启或重载插件。
+4. 使用 `/ss <玩家> qh/qy/dy` 打开对应菜单。
+5. 强化：左侧放装备，右侧放宝石（岩浆膏），点击浅绿色玻璃板。
+6. 迁移：左侧放旧装备，右侧放新装备，点击迁移按钮。
+7. 叠影：左侧放目标装备，右侧放消耗品，点击执行叠影。
+
+### 构建方法
+
+本项目使用 Maven 构建。确保已安装 JDK 21 和 Maven。
+
+```bash
+mvn clean package
+```
+
+构建完成后，可在 `target/` 目录找到 `Strengshaku-1.0.jar`。
+
+**依赖：**
+- Paper API 1.21.4
+- Java 21
+
+### 注意事项
+
+- 强化属性会严格添加到 `attribute-separator` 指定的分隔线下方，不会干扰其他插件的 Lore。
+- 迁移要求两件物品类型匹配：剑类↔斧类可互转；弓、弩、三叉戟、重锤需同类；护甲需同部位。
+- 叠影要求两件物品同为武器或同为护甲；武器叠影使用攻击力计算，护甲叠影使用生命力计算。
+- 关闭 GUI 时，槽位 20 和 24 中的物品会返还给玩家；背景玻璃板不会返还。
+- 概率曲线中的 `max-attack` 实际代表对应属性的阈值，所有普通宝石共用同一套曲线。
+- 若装备没有对应属性值，则按曲线最低档（`max-attack` 最小值）计算成功率，请合理设置基础概率。
+
+---
+
+## English
+
+### Introduction
+
+**Strengshaku** is a strengthening plugin for **Paper 1.21.4** that provides gear enhancement, attribute migration, and shadow stacking. It uses GUIs for operation, parses attribute entries from gem (magma cream) lore, and applies configurable probability curves. All attributes are added as lore and strictly inserted below a specified separator line to avoid interfering with other plugins' lore.
+
+### Features
+
+- **Gear Enhancement**: Place gear in the left slot and a gem (magma cream) in the right slot, then click the enhance button. The success rate is dynamically calculated based on the corresponding attribute value on the gear. All normal gems share the same probability curve; super gems always succeed.
+- **Combo Gems**: Supports combo entries like lightning and lifesteal. The first enhancement adds two lore lines (e.g., "Lightning Damage Increase" and "Lightning Chance Increase"); subsequent enhancements only increase the first attribute.
+- **Attribute Migration**: Migrates attribute sections and enchantments from old gear to new gear. The two items must match in type (swords ↔ axes are interchangeable; bow, crossbow, trident, mace must be the same type; armor must be the same piece). Stackable attributes are preserved. A live preview is provided in the migration GUI.
+- **Shadow Stacking**: Consumes a waste item and converts 10% of its attack damage or health into "Crit Damage Multiplier" (weapons) or "Crit Resistance" (armor) on the target item. The success rate is based on the target's existing crit attribute value.
+- **Admin Command**: Directly add custom lore to a player's held item under a specified section (equip/extra/skill).
+- **Highly Configurable**: Probability curves, attribute regex, combo gems, and stackable attributes are all configured in `config.yml`.
+
+### Commands & Permissions
+
+| Command | Description | Permission |
+|---------|-------------|------------|
+| `/ss <player> qh` | Opens the enhancement GUI for the target player | `strengshaku.use` (default: everyone) |
+| `/ss <player> qy` | Opens the attribute migration GUI | `strengshaku.use` |
+| `/ss <player> dy` | Opens the shadow stacking GUI | `strengshaku.use` |
+| `/ssadmin addlore <player> <section> <lore>` | Adds lore to the player's held item. Sections: `equip`, `extra`, `skill` | `strengshaku.admin` (default: OP) |
+
+> The `qh` subcommand can be omitted; `/ss <player>` opens the enhancement menu by default.
+
+### Configuration `config.yml`
+
+```yaml
+# Super gem indicator (if lore contains this text, enhancement always succeeds)
+super-gem-indicator: "&8[*]&b特级宝石"
+
+# Max enhancement level
+max-level: 10
+
+# Attribute separator
+attribute-separator: "&7=======&9&l装备属性&7======="
+
+# Attribute format
+attribute-format: "&8[*]&7{attribute}&c{value}"
+
+# Normal gem success rate curve (based on the corresponding attribute value on gear)
+attack-gem-probability:
+  - max-attack: 15
+    rate: 0.5
+  - max-attack: 20
+    rate: 0.85
+  - max-attack: 30
+    rate: 0.55
+  - max-attack: 40
+    rate: 0.35
+  - max-attack: 50
+    rate: 0.25
+  - default: 0.05
+
+# Shadow stacking success rate curve (based on target's existing crit value)
+dieying-probability:
+  - max-attribute: 100
+    rate: 0.5
+  - max-attribute: 120
+    rate: 0.3
+  - max-attribute: 150
+    rate: 0.2
+  - max-attribute: 200
+    rate: 0.1
+  - max-attribute: 300
+    rate: 0.08
+  - default: 0.05
+
+# Attribute regex patterns
+attribute-patterns:
+  attack:
+    regex: "&7攻击力增加&c([+-]?\\d+)"
+    attribute: "攻击力增加"
+  defense:
+    regex: "&7防御力增加&c([+-]?\\d+)"
+    attribute: "防御力增加"
+  health:
+    regex: "&7生命力增加&c([+-]?\\d+)"
+    attribute: "生命力增加"
+  true_damage:
+    regex: "&7真实伤害增加&c([+-]?\\d+)"
+    attribute: "真实伤害增加"
+  crit_rate:
+    regex: "&7暴击率增加&c([+-]?\\d+)"
+    attribute: "暴击率增加"
+  dodge_rate:
+    regex: "&7闪避率增加&c([+-]?\\d+)"
+    attribute: "闪避率增加"
+
+# Combo gems (first enhancement adds two lore lines; subsequent only the first)
+combo-gems:
+  - trigger: "雷击伤害增加"
+    attributes: ["雷击伤害增加", "雷击几率增加"]
+    increments: [1, 10]
+  - trigger: "吸血倍率增加"
+    attributes: ["吸血倍率增加", "吸血几率增加"]
+    increments: [1, 10]
+
+# Stackable attributes (preserved during migration)
+stackable-attributes:
+  - "恢复效率增加"
+  - "生命偷取"
+
+# Stackable lore marker
+stackable-lore-marker: "&7(可叠加)"
+```
+
+### Installation & Usage
+
+1. Place `Strengshaku.jar` into the server's `plugins` folder.
+2. Start or restart the server; `config.yml` will be generated automatically.
+3. Modify `config.yml` as needed, then restart or reload the plugin.
+4. Use `/ss <player> qh/qy/dy` to open the corresponding GUI.
+5. Enhancement: Place gear on the left and a gem (magma cream) on the right, then click the lime green glass pane.
+6. Migration: Place old gear on the left and new gear on the right, then click the migrate button.
+7. Shadow Stacking: Place the target item on the left and a waste item on the right, then click the execute button.
+
+### Build
+
+This project uses Maven. Ensure JDK 21 and Maven are installed.
+
+```bash
+mvn clean package
+```
+
+After building, the `Strengshaku-1.0.jar` will be in the `target/` directory.
+
+**Dependencies:**
+- Paper API 1.21.4
+- Java 21
+
+### Notes
+
+- Enhanced attributes are strictly inserted below the separator defined by `attribute-separator`, without interfering with other plugins' lore.
+- Migration requires matching types: swords ↔ axes are interchangeable; bow, crossbow, trident, mace must be the same type; armor must be the same piece.
+- Shadow stacking requires both items to be weapons or both to be armor. Weapon stacking uses attack damage; armor stacking uses health.
+- When closing the GUI, items in slots 20 and 24 are returned to the player; background glass panes are not returned.
+- The `max-attack` in the probability curve actually represents the threshold of the corresponding attribute; all normal gems share the same curve.
+- If the gear does not have the corresponding attribute value, the lowest tier of the curve is used. Please set a reasonable base probability.
